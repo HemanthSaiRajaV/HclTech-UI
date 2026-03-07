@@ -9,6 +9,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
   const [searchTerm, setSearchTerm] = useState('');      // debounced value
   const [form, setForm]           = useState({ name: '', email: '', department: '' });
   const [formError, setFormError] = useState('');
+  const [pressedBtn, setPressedBtn] = useState(null);    // Track pressed button for touch feedback
 
   // Fetch all employees on mount
   useEffect(() => {
@@ -47,11 +48,15 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
     e.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Touch event handlers for button feedback
+  const handleTouchStart = (btnId) => setPressedBtn(btnId);
+  const handleTouchEnd = () => setPressedBtn(null);
+
   return (
     <div style={styles.container}>
       <h2 style={styles.header}>👥 Employees</h2>
 
-      {/* Search with debounce */}
+      {/* Search with debounce - Touch optimized */}
       <input
         style={styles.input}
         placeholder="Search by name or department..."
@@ -59,7 +64,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
         onChange={(e) => setSearch(e.target.value)}
       />
 
-      {/* Create Employee Form */}
+      {/* Create Employee Form - Touch optimized */}
       <div style={styles.form}>
         <h4 style={styles.formTitle}>Add Employee</h4>
         {['name', 'email', 'department'].map((field) => (
@@ -72,10 +77,24 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
           />
         ))}
         {formError && <p style={styles.error}>{formError}</p>}
-        <button style={styles.btn} onClick={handleCreate}>➕ Add Employee</button>
+        <button 
+          style={{
+            ...styles.btn,
+            transform: pressedBtn === 'add' ? 'scale(0.97)' : 'scale(1)',
+            boxShadow: pressedBtn === 'add' ? '0 1px 4px rgba(16, 185, 129, 0.2)' : '0 2px 8px rgba(16, 185, 129, 0.3)'
+          }}
+          onTouchStart={() => handleTouchStart('add')}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={() => handleTouchStart('add')}
+          onMouseUp={handleTouchEnd}
+          onMouseLeave={handleTouchEnd}
+          onClick={handleCreate}
+        >
+          ➕ Add Employee
+        </button>
       </div>
 
-      {/* Employee List */}
+      {/* Employee List - Touch optimized */}
       {loading ? <p style={styles.loadingText}>Loading...</p> : (
         <ul style={styles.list}>
           {filtered.map((emp) => (
@@ -86,18 +105,42 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
                 background: currentUser?._id === emp._id ? '#dbeafe' : '#fff',
               }}
             >
-              <div>
+              <div style={styles.empInfo}>
                 <div style={styles.empName}>{emp.name}</div>
                 <div style={styles.empDept}>{emp.department}</div>
                 <div style={styles.empEmail}>{emp.email}</div>
               </div>
               <div style={styles.btnGroup}>
-                {/* Set as current logged-in user */}
-                <button style={styles.smallBtn} onClick={() => setCurrentUser(emp)}>
+                {/* Set as current logged-in user - Touch optimized */}
+                <button 
+                  style={{
+                    ...styles.smallBtn,
+                    transform: pressedBtn === `me-${emp._id}` ? 'scale(0.95)' : 'scale(1)',
+                  }}
+                  onTouchStart={() => handleTouchStart(`me-${emp._id}`)}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseDown={() => handleTouchStart(`me-${emp._id}`)}
+                  onMouseUp={handleTouchEnd}
+                  onMouseLeave={handleTouchEnd}
+                  onClick={() => setCurrentUser(emp)}
+                >
                   {currentUser?._id === emp._id ? '✅ Me' : 'Set as Me'}
                 </button>
-                {/* View feedback for this employee */}
-                <button style={{ ...styles.smallBtn, background: '#6366f1', color: '#fff' }} onClick={() => onSelect(emp)}>
+                {/* View feedback for this employee - Touch optimized */}
+<button 
+                  style={{
+                    ...styles.smallBtn, 
+                    background: '#22c55e', 
+                    color: '#fff',
+                    transform: pressedBtn === `view-${emp._id}` ? 'scale(0.95)' : 'scale(1)',
+                  }}
+                  onTouchStart={() => handleTouchStart(`view-${emp._id}`)}
+                  onTouchEnd={handleTouchEnd}
+                  onMouseDown={() => handleTouchStart(`view-${emp._id}`)}
+                  onMouseUp={handleTouchEnd}
+                  onMouseLeave={handleTouchEnd}
+                  onClick={() => onSelect(emp)}
+                >
                   View
                 </button>
               </div>
@@ -127,14 +170,15 @@ const styles = {
   input: { 
     display: 'block', 
     width: '100%', 
-    padding: '10px 14px', 
-    margin: '6px 0', 
-    borderRadius: 8, 
+    padding: '14px 16px',       // Increased from 10px 14px
+    margin: '8px 0',           // Increased margin
+    borderRadius: 10,          // Slightly larger border radius
     border: '1px solid #d1d5db', 
     boxSizing: 'border-box',
-    fontSize: 14,
+    fontSize: 16,               // Increased from 14 for better mobile readability
     transition: 'border-color 0.2s, box-shadow 0.2s',
-    outline: 'none'
+    outline: 'none',
+    touchAction: 'manipulation'  // Improves touch response
   },
   form: { 
     background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
@@ -150,47 +194,59 @@ const styles = {
     color: '#334155'
   },
   btn: { 
-    padding: '10px 20px', 
+    width: '100%',              // Full width for easier touch
+    padding: '14px 20px',       // Increased from 10px 20px
     background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
     color: '#fff', 
     border: 'none', 
-    borderRadius: 8, 
+    borderRadius: 10,           // Slightly larger
     cursor: 'pointer', 
-    marginTop: 8,
-    fontWeight: 500,
-    fontSize: 14,
-    transition: 'transform 0.15s, box-shadow 0.15s',
-    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+    marginTop: 10,              // Increased margin
+    fontWeight: 600,           // Slightly bolder
+    fontSize: 16,               // Increased from 14
+    transition: 'transform 0.1s, box-shadow 0.1s',
+    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)',
+    touchAction: 'manipulation',
+    minHeight: 48               // Minimum touch target
   },
   smallBtn: { 
-    padding: '6px 12px', 
+    padding: '12px 16px',       // Increased from 6px 12px
     background: '#f1f5f9', 
     border: 'none', 
-    borderRadius: 6, 
+    borderRadius: 8,            // Slightly larger
     cursor: 'pointer', 
     marginLeft: 6, 
-    fontSize: 12,
+    fontSize: 14,               // Increased from 12
     fontWeight: 500,
     color: '#475569',
-    transition: 'background 0.15s, transform 0.15s'
+    transition: 'background 0.1s, transform 0.1s',
+    touchAction: 'manipulation',
+    minHeight: 44,              // Minimum 44px touch target
+    minWidth: 80                // Minimum width for better touch
   },
   list: { listStyle: 'none', padding: 0, margin: 0 },
   listItem: { 
     display: 'flex', 
     justifyContent: 'space-between', 
     alignItems: 'center', 
-    padding: 14, 
-    marginBottom: 10, 
-    borderRadius: 10, 
+    padding: 16,                // Increased from 14
+    marginBottom: 12,          // Increased from 10
+    borderRadius: 12,          // Slightly larger
     border: '1px solid #f1f5f9',
     background: '#fff',
     transition: 'box-shadow 0.2s, transform 0.2s',
-    boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+    touchAction: 'manipulation'
   },
-  btnGroup: { display: 'flex' },
-  error: { color: '#ef4444', fontSize: 13, margin: '4px 0' },
-  empName: { fontSize: 15, fontWeight: 600, color: '#1e293b' },
-  empDept: { fontSize: 13, color: '#64748b', marginTop: 2 },
-  empEmail: { fontSize: 12, color: '#94a3b8' },
-  loadingText: { color: '#64748b', fontSize: 14 },
+  empInfo: {
+    flex: 1,
+    minWidth: 0                // Prevents overflow
+  },
+  btnGroup: { display: 'flex', gap: 6 },
+  error: { color: '#ef4444', fontSize: 14, margin: '6px 0' },
+  empName: { fontSize: 16, fontWeight: 600, color: '#1e293b' },
+  empDept: { fontSize: 14, color: '#64748b', marginTop: 4 },
+  empEmail: { fontSize: 13, color: '#94a3b8', marginTop: 2 },
+  loadingText: { color: '#64748b', fontSize: 15 },
 };
+
