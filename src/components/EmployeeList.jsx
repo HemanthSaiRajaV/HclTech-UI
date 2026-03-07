@@ -49,7 +49,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
 
   return (
     <div style={styles.container}>
-      <h2>👥 Employees</h2>
+      <h2 style={styles.header}>👥 Employees</h2>
 
       {/* Search with debounce */}
       <input
@@ -61,7 +61,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
 
       {/* Create Employee Form */}
       <div style={styles.form}>
-        <h4>Add Employee</h4>
+        <h4 style={styles.formTitle}>Add Employee</h4>
         {['name', 'email', 'department'].map((field) => (
           <input
             key={field}
@@ -72,24 +72,24 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
           />
         ))}
         {formError && <p style={styles.error}>{formError}</p>}
-        <button style={styles.btn} onClick={handleCreate}>➕ Add</button>
+        <button style={styles.btn} onClick={handleCreate}>➕ Add Employee</button>
       </div>
 
       {/* Employee List */}
-      {loading ? <p>Loading...</p> : (
+      {loading ? <p style={styles.loadingText}>Loading...</p> : (
         <ul style={styles.list}>
           {filtered.map((emp) => (
             <li
               key={emp._id}
               style={{
                 ...styles.listItem,
-                background: currentUser?._id === emp._id ? '#dbeafe' : '#f9fafb',
+                background: currentUser?._id === emp._id ? '#dbeafe' : '#fff',
               }}
             >
               <div>
-                <strong>{emp.name}</strong> — {emp.department}
-                <br />
-                <small>{emp.email}</small>
+                <div style={styles.empName}>{emp.name}</div>
+                <div style={styles.empDept}>{emp.department}</div>
+                <div style={styles.empEmail}>{emp.email}</div>
               </div>
               <div style={styles.btnGroup}>
                 {/* Set as current logged-in user */}
@@ -110,13 +110,87 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
 }
 
 const styles = {
-  container: { padding: 16, maxWidth: 480 },
-  input: { display: 'block', width: '100%', padding: '8px 10px', margin: '6px 0', borderRadius: 6, border: '1px solid #d1d5db', boxSizing: 'border-box' },
-  form: { background: '#f3f4f6', padding: 12, borderRadius: 8, marginBottom: 12 },
-  btn: { padding: '8px 16px', background: '#10b981', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', marginTop: 4 },
-  smallBtn: { padding: '4px 10px', background: '#e5e7eb', border: 'none', borderRadius: 4, cursor: 'pointer', marginLeft: 4, fontSize: 12 },
-  list: { listStyle: 'none', padding: 0 },
-  listItem: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 10, marginBottom: 8, borderRadius: 8, border: '1px solid #e5e7eb' },
+  container: { 
+    padding: 20, 
+    maxWidth: 500, 
+    background: '#fff', 
+    borderRadius: 12, 
+    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+  },
+  header: {
+    margin: '0 0 16px 0',
+    fontSize: 22,
+    fontWeight: 600,
+    color: '#1f2937'
+  },
+  input: { 
+    display: 'block', 
+    width: '100%', 
+    padding: '10px 14px', 
+    margin: '6px 0', 
+    borderRadius: 8, 
+    border: '1px solid #d1d5db', 
+    boxSizing: 'border-box',
+    fontSize: 14,
+    transition: 'border-color 0.2s, box-shadow 0.2s',
+    outline: 'none'
+  },
+  form: { 
+    background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', 
+    padding: 16, 
+    borderRadius: 10, 
+    marginBottom: 16,
+    border: '1px solid #e2e8f0'
+  },
+  formTitle: {
+    margin: '0 0 12px 0',
+    fontSize: 16,
+    fontWeight: 600,
+    color: '#334155'
+  },
+  btn: { 
+    padding: '10px 20px', 
+    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', 
+    color: '#fff', 
+    border: 'none', 
+    borderRadius: 8, 
+    cursor: 'pointer', 
+    marginTop: 8,
+    fontWeight: 500,
+    fontSize: 14,
+    transition: 'transform 0.15s, box-shadow 0.15s',
+    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.3)'
+  },
+  smallBtn: { 
+    padding: '6px 12px', 
+    background: '#f1f5f9', 
+    border: 'none', 
+    borderRadius: 6, 
+    cursor: 'pointer', 
+    marginLeft: 6, 
+    fontSize: 12,
+    fontWeight: 500,
+    color: '#475569',
+    transition: 'background 0.15s, transform 0.15s'
+  },
+  list: { listStyle: 'none', padding: 0, margin: 0 },
+  listItem: { 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    padding: 14, 
+    marginBottom: 10, 
+    borderRadius: 10, 
+    border: '1px solid #f1f5f9',
+    background: '#fff',
+    transition: 'box-shadow 0.2s, transform 0.2s',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
+  },
   btnGroup: { display: 'flex' },
-  error: { color: 'red', fontSize: 13 },
+  error: { color: '#ef4444', fontSize: 13, margin: '4px 0' },
+  empName: { fontSize: 15, fontWeight: 600, color: '#1e293b' },
+  empDept: { fontSize: 13, color: '#64748b', marginTop: 2 },
+  empEmail: { fontSize: 12, color: '#94a3b8' },
+  loadingText: { color: '#64748b', fontSize: 14 },
 };

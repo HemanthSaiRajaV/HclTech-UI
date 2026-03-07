@@ -70,8 +70,8 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
             </div>
             {/* Delete button: visible only if current user is the giver */}
             {currentUser && fb.givenBy?._id === currentUser._id && (
-              <button style={styles.deleteBtn} onClick={() => handleDelete(fb._id)}>
-                🗑
+              <button color='red' style={styles.deleteBtn} onClick={() => handleDelete(fb._id)}>
+                Delete FeedBack
               </button>
             )}
           </div>
@@ -96,5 +96,5 @@ const styles = {
   ratingNum: { color: '#6b7280', fontSize: 13 },
   comment: { margin: '6px 0', color: '#374151' },
   meta: { fontSize: 12, color: '#9ca3af', margin: 0 },
-  deleteBtn: { background: 'none', border: 'none', cursor: 'pointer', fontSize: 16 },
+  deleteBtn: { background: '#ef4444', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: 12, fontWeight: 'bold' },
 };
