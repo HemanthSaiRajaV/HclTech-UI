@@ -9,6 +9,13 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
   const [form, setForm]           = useState({ name: '', email: '', department: '' });
   const [formError, setFormError] = useState('');
 
+  const fetchEmployees = async () => {
+    setLoading(true);
+    const data = await getAllEmployees();
+    setEmployees(data);
+    setLoading(false);
+  };
+
   // Fetch all employees on mount
   useEffect(() => {
     fetchEmployees();
@@ -19,13 +26,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
     const timer = setTimeout(() => setSearchTerm(search), 400);
     return () => clearTimeout(timer);
   }, [search]);
-
-  const fetchEmployees = async () => {
-    setLoading(true);
-    const data = await getAllEmployees();
-    setEmployees(data);
-    setLoading(false);
-  };
 
   const handleCreate = async () => {
     const { name, email, department } = form;
