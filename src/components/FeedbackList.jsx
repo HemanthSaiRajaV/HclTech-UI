@@ -1,8 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { getFeedbackReceived, getAverageRating, deleteFeedback } from '../api';
 import styles from '../styles/FeedbackList.module.css';
 
-export default function FeedbackList({ employee, currentUser, refresh }) {
+export default function FeedbackList({ employee, currentUser }) {
   const [feedbacks, setFeedbacks] = useState([]);
   const [average, setAverage]     = useState({ average: 0, totalFeedbacks: 0 });
   const [loading, setLoading]     = useState(false);
@@ -17,12 +17,6 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
     setAverage(avgData);
     setLoading(false);
   };
-
-  // Re-fetch when employee changes or parent triggers refresh
-  useEffect(() => {
-    if (!employee) return;
-    fetchData();
-  }, [employee, refresh]);
 
   // Memoize sorted feedbacks (Bonus: memoization)
   const sortedFeedbacks = useMemo(
