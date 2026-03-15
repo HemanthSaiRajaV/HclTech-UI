@@ -1,10 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { getAllEmployees, createEmployee } from '../api';
 
 export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState('');
   const [search, setSearch]       = useState('');        // for debounced search
   const [searchTerm, setSearchTerm] = useState('');      // debounced value
   const [form, setForm]           = useState({ name: '', email: '', department: '' });

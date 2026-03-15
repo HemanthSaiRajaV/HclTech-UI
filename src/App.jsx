@@ -9,7 +9,6 @@ export default function App() {
   const [selectedEmployee, setSelectedEmployee] = useState(null); // employee being viewed
   const [currentUser, setCurrentUser]           = useState(null); // "logged-in" user
   const [refreshKey, setRefreshKey]             = useState(0);    // triggers FeedbackList re-fetch
-  const [showEmployeeList, setShowEmployeeList] = useState(true);
 
   // Called after feedback is submitted → refresh list
   const handleFeedbackSuccess = () => setRefreshKey((k) => k + 1);
