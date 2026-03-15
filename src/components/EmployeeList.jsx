@@ -9,7 +9,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
   const [searchTerm, setSearchTerm] = useState('');      // debounced value
   const [form, setForm]           = useState({ name: '', email: '', department: '' });
   const [formError, setFormError] = useState('');
-  const [pressedBtn, setPressedBtn] = useState(null);    // Track pressed button for touch feedback
 
   // Fetch all employees on mount
   useEffect(() => {
@@ -48,10 +47,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
     e.department.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Touch event handlers for button feedback
-  const handleTouchStart = (btnId) => setPressedBtn(btnId);
-  const handleTouchEnd = () => setPressedBtn(null);
-
   return (
     <div style={styles.container}>
       <h2 style={styles.header}>👥 Employees</h2>
@@ -78,13 +73,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
         ))}
         {formError && <p style={styles.error}>{formError}</p>}
         <button 
-          style={{
-            ...styles.btn,
-            transform: pressedBtn === 'add' ? 'scale(0.97)' : 'scale(1)',
-            boxShadow: pressedBtn === 'add' ? '0 1px 4px rgba(16, 185, 129, 0.2)' : '0 2px 8px rgba(16, 185, 129, 0.3)'
-          }}
-          onTouchStart={() => handleTouchStart('add')}
-          onTouchEnd={handleTouchEnd}
+          style={styles.btn}
           onClick={handleCreate}
         >
           ➕ Add Employee
@@ -110,12 +99,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
               <div style={styles.btnGroup}>
                 {/* Set as current logged-in user - Touch optimized */}
                 <button 
-                  style={{
-                    ...styles.smallBtn,
-                    transform: pressedBtn === `me-${emp._id}` ? 'scale(0.95)' : 'scale(1)',
-                  }}
-                  onTouchStart={() => handleTouchStart(`me-${emp._id}`)}
-                  onTouchEnd={handleTouchEnd}
+                  style={styles.smallBtn}
                   onClick={() => setCurrentUser(emp)}
                 >
                   {currentUser?._id === emp._id ? '✅ Me' : 'Set as Me'}
@@ -126,10 +110,7 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
                     ...styles.smallBtn, 
                     background: '#22c55e', 
                     color: '#fff',
-                    transform: pressedBtn === `view-${emp._id}` ? 'scale(0.95)' : 'scale(1)',
                   }}
-                  onTouchStart={() => handleTouchStart(`view-${emp._id}`)}
-                  onTouchEnd={handleTouchEnd}
                   onClick={() => onSelect(emp)}
                 >
                   View

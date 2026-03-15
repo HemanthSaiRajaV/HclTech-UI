@@ -5,7 +5,6 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
   const [feedbacks, setFeedbacks] = useState([]);
   const [average, setAverage]     = useState({ average: 0, totalFeedbacks: 0 });
   const [loading, setLoading]     = useState(false);
-  const [pressedBtn, setPressedBtn] = useState(null);    // Track pressed button for touch feedback
 
   // Re-fetch when employee changes or parent triggers refresh
   useEffect(() => {
@@ -36,10 +35,6 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
     if (res.error) { alert(res.error); return; }
     fetchData(); // refresh after delete
   };
-
-  // Touch event handlers for button feedback
-  const handleTouchStart = (btnId) => setPressedBtn(btnId);
-  const handleTouchEnd = () => setPressedBtn(null);
 
   if (!employee) return null;
 
@@ -96,15 +91,7 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
               {/* Delete button: visible only if current user is the giver - Touch optimized */}
               {currentUser && fb.givenBy?._id === currentUser._id && (
                 <button 
-                  style={{
-                    ...styles.deleteBtn,
-                    transform: pressedBtn === `delete-${fb._id}` ? 'scale(0.95)' : 'scale(1)',
-                    boxShadow: pressedBtn === `delete-${fb._id}` 
-                      ? 'inset 0 2px 4px rgba(0,0,0,0.2)' 
-                      : '0 2px 6px rgba(239, 68, 68, 0.3)'
-                  }}
-                  onTouchStart={() => handleTouchStart(`delete-${fb._id}`)}
-                  onTouchEnd={handleTouchEnd}
+                  style={styles.deleteBtn}
                   onClick={() => handleDelete(fb._id)}
                 >
                   🗑️ Delete

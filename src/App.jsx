@@ -9,37 +9,13 @@ export default function App() {
   const [selectedEmployee, setSelectedEmployee] = useState(null); // employee being viewed
   const [currentUser, setCurrentUser]           = useState(null); // "logged-in" user
   const [refreshKey, setRefreshKey]             = useState(0);    // triggers FeedbackList re-fetch
-  const [isMobile, setIsMobile]                 = useState(window.innerWidth <= 768);
-  const [showEmployeeList, setShowEmployeeList] = useState(!isMobile);
-
-  // Listen for window resize
-  useState(() => {
-    const handleResize = () => {
-      const mobile = window.innerWidth <= 768;
-      setIsMobile(mobile);
-      if (!mobile) {
-        setShowEmployeeList(true);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const [showEmployeeList, setShowEmployeeList] = useState(true);
 
   // Called after feedback is submitted → refresh list
   const handleFeedbackSuccess = () => setRefreshKey((k) => k + 1);
 
-  // Mobile: toggle between employee list and feedback view
   const handleEmployeeSelect = (employee) => {
     setSelectedEmployee(employee);
-    if (isMobile) {
-      setShowEmployeeList(false);
-    }
-  };
-
-  // Mobile: go back to employee list
-  const handleBackToList = () => {
-    setShowEmployeeList(true);
-    setSelectedEmployee(null);
   };
 
   return (
@@ -55,36 +31,17 @@ export default function App() {
 
       <Suspense fallback={<div style={styles.loading}>Loading...</div>}>
         <div style={styles.layout}>
-          {/* Left Panel: Employee List - Mobile toggleable */}
-          <div 
-            style={{
-              ...styles.left,
-              display: isMobile ? (showEmployeeList ? 'block' : 'none') : 'block'
-            }}
-          >
-            {/* Mobile back button */}
-            {isMobile && selectedEmployee && (
-              <button 
-                style={styles.backBtn}
-                onClick={handleBackToList}
-              >
-                ← Back to Employees
-              </button>
-            )}
-            <EmployeeList
-              onSelect={handleEmployeeSelect}
-              currentUser={currentUser}
-              setCurrentUser={setCurrentUser}
-            />
-          </div>
+      {/* Left Panel: Employee List */}
+      <div style={styles.left}>
+        <EmployeeList
+          onSelect={handleEmployeeSelect}
+          currentUser={currentUser}
+          setCurrentUser={setCurrentUser}
+        />
+      </div>
 
-          {/* Right Panel: Feedback area - Mobile toggleable */}
-          <div 
-            style={{
-              ...styles.right,
-              display: isMobile ? (showEmployeeList ? 'none' : 'block') : 'block'
-            }}
-          >
+      {/* Right Panel: Feedback area */}
+      <div style={styles.right}>
             {selectedEmployee ? (
               <>
                 {/* Show form only if viewing someone else */}
@@ -108,7 +65,7 @@ export default function App() {
               </>
             ) : (
               <div style={styles.placeholder}>
-                👈 Select an employee to view their feedback
+                Select an employee to view their feedback
               </div>
             )}
           </div>
@@ -122,8 +79,7 @@ const styles = {
   app: { 
     fontFamily: 'Inter, sans-serif', 
     minHeight: '100vh', 
-    background: '#f8fafc',
-    touchAction: 'manipulation'  // Improves touch response
+    background: '#f8fafc'
   },
 header: { 
     background: '#22c55e', 
@@ -186,7 +142,7 @@ header: {
   },
   loading: { padding: 40, textAlign: 'center', color: '#6b7280' },
   backBtn: {
-    display: 'block',
+    display: 'none',
     width: '100%',
     padding: '14px 20px',
     background: '#f1f5f9',
@@ -197,44 +153,7 @@ header: {
     color: '#475569',
     cursor: 'pointer',
     textAlign: 'left',
-    touchAction: 'manipulation',
     minHeight: 48
   },
 };
-
-// Add responsive styles via CSS for media queries
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  @media (max-width: 768px) {
-    .app-layout {
-      flex-direction: column !important;
-    }
-  }
-  
-  /* Prevent pull-to-refresh and overscroll on mobile */
-  body {
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-  
-  /* Improve touch scrolling */
-  * {
-    -webkit-tap-highlight-color: transparent;
-  }
-  
-  /* Prevent text selection on buttons during touch */
-  button {
-    -webkit-user-select: none;
-    user-select: none;
-  }
-  
-  /* Better focus states for accessibility */
-  button:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible {
-    outline: 2px solid #6366f1;
-    outline-offset: 2px;
-  }
-`;
-document.head.appendChild(styleSheet);
 
