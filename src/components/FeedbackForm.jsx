@@ -91,9 +91,6 @@ export default function FeedbackForm({ targetEmployee, currentUser, onSuccess })
         }}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        onMouseDown={handleTouchStart}
-        onMouseUp={handleTouchEnd}
-        onMouseLeave={handleTouchEnd}
         onClick={handleSubmit}
         disabled={loading}
       >

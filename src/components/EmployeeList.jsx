@@ -85,9 +85,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
           }}
           onTouchStart={() => handleTouchStart('add')}
           onTouchEnd={handleTouchEnd}
-          onMouseDown={() => handleTouchStart('add')}
-          onMouseUp={handleTouchEnd}
-          onMouseLeave={handleTouchEnd}
           onClick={handleCreate}
         >
           ➕ Add Employee
@@ -119,9 +116,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
                   }}
                   onTouchStart={() => handleTouchStart(`me-${emp._id}`)}
                   onTouchEnd={handleTouchEnd}
-                  onMouseDown={() => handleTouchStart(`me-${emp._id}`)}
-                  onMouseUp={handleTouchEnd}
-                  onMouseLeave={handleTouchEnd}
                   onClick={() => setCurrentUser(emp)}
                 >
                   {currentUser?._id === emp._id ? '✅ Me' : 'Set as Me'}
@@ -136,9 +130,6 @@ export default function EmployeeList({ onSelect, currentUser, setCurrentUser }) 
                   }}
                   onTouchStart={() => handleTouchStart(`view-${emp._id}`)}
                   onTouchEnd={handleTouchEnd}
-                  onMouseDown={() => handleTouchStart(`view-${emp._id}`)}
-                  onMouseUp={handleTouchEnd}
-                  onMouseLeave={handleTouchEnd}
                   onClick={() => onSelect(emp)}
                 >
                   View

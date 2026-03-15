@@ -105,9 +105,6 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
                   }}
                   onTouchStart={() => handleTouchStart(`delete-${fb._id}`)}
                   onTouchEnd={handleTouchEnd}
-                  onMouseDown={() => handleTouchStart(`delete-${fb._id}`)}
-                  onMouseUp={handleTouchEnd}
-                  onMouseLeave={handleTouchEnd}
                   onClick={() => handleDelete(fb._id)}
                 >
                   🗑️ Delete
