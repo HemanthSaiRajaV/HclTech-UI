@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { getFeedbackReceived, getAverageRating, deleteFeedback } from '../api';
+import styles from '../styles/FeedbackList.module.css';
 
 export default function FeedbackList({ employee, currentUser, refresh }) {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -46,60 +47,60 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
   };
 
   return (
-    <div style={styles.container}>
-<h3 style={styles.title}>📊 Feedback for <span style={{ color: '#22c55e' }}>{employee.name}</span></h3>
+    <div className={styles.container}>
+      <h3 className={styles.title}>📊 Feedback for <span>{employee.name}</span></h3>
 
       {/* Average Rating Card - Touch optimized */}
-      <div style={styles.avgCard}>
-        <div style={styles.avgScore}>{average.average ? average.average.toFixed(1) : '—'}</div>
+      <div className={styles.avgCard}>
+        <div className={styles.avgScore}>{average.average ? average.average.toFixed(1) : '—'}</div>
         <div>
-          <div style={styles.starsContainer}>
+          <div className={styles.starsContainer}>
             {stars(Math.round(average.average || 0)).filled.split('').map((star, i) => (
-              <span key={`filled-${i}`} style={styles.starFilled}>★</span>
+              <span key={`filled-${i}`} className={styles.starFilled}>★</span>
             ))}
             {stars(5 - Math.round(average.average || 0)).empty.split('').map((star, i) => (
-              <span key={`empty-${i}`} style={styles.starEmpty}>☆</span>
+              <span key={`empty-${i}`} className={styles.starEmpty}>☆</span>
             ))}
           </div>
-          <div style={styles.avgLabel}>{average.totalFeedbacks} feedback{average.totalFeedbacks !== 1 ? 's' : ''}</div>
+          <div className={styles.avgLabel}>{average.totalFeedbacks} feedback{average.totalFeedbacks !== 1 ? 's' : ''}</div>
         </div>
       </div>
 
-      {loading && <p style={styles.loadingText}>Loading...</p>}
+      {loading && <p className={styles.loadingText}>Loading...</p>}
 
       {/* Feedback List sorted by date - Touch optimized */}
       {sortedFeedbacks.length === 0 && !loading && (
-        <p style={styles.emptyText}>No feedback yet.</p>
+        <p className={styles.emptyText}>No feedback yet.</p>
       )}
 
       {sortedFeedbacks.map((fb) => {
         const starData = stars(fb.rating);
         return (
-          <div key={fb._id} style={styles.card}>
-            <div style={styles.cardHeader}>
-              <div style={styles.ratingSection}>
-                <div style={styles.starsRow}>
+          <div key={fb._id} className={styles.card}>
+            <div className={styles.cardHeader}>
+              <div className={styles.ratingSection}>
+                <div className={styles.starsRow}>
                   {starData.filled.split('').map((star, i) => (
-                    <span key={`fb-filled-${i}`} style={styles.starFilled}>★</span>
+                    <span key={`fb-filled-${i}`} className={styles.starFilled}>★</span>
                   ))}
                   {starData.empty.split('').map((star, i) => (
-                    <span key={`fb-empty-${i}`} style={styles.starEmpty}>☆</span>
+                    <span key={`fb-empty-${i}`} className={styles.starEmpty}>☆</span>
                   ))}
                 </div>
-                <span style={styles.ratingNum}> ({fb.rating}/5)</span>
+                <span className={styles.ratingNum}> ({fb.rating}/5)</span>
               </div>
               {/* Delete button: visible only if current user is the giver - Touch optimized */}
               {currentUser && fb.givenBy?._id === currentUser._id && (
                 <button 
-                  style={styles.deleteBtn}
+                  className={styles.deleteBtn}
                   onClick={() => handleDelete(fb._id)}
                 >
                   🗑️ Delete
                 </button>
               )}
             </div>
-            <p style={styles.comment}>{fb.comment || <em>No comment</em>}</p>
-            <p style={styles.meta}>
+            <p className={styles.comment}>{fb.comment || <em>No comment</em>}</p>
+            <p className={styles.meta}>
               By: <strong>{fb.givenBy?.name || 'Unknown'}</strong> &nbsp;|&nbsp;
               {new Date(fb.createdAt).toLocaleString()}
             </p>
@@ -109,101 +110,3 @@ export default function FeedbackList({ employee, currentUser, refresh }) {
     </div>
   );
 }
-
-const styles = {
-  container: { padding: 16 },
-  title: {
-    margin: '0 0 16px 0',
-    fontSize: 20,
-    fontWeight: 600,
-    color: '#1f2937'
-  },
-  avgCard: { 
-    display: 'flex', 
-    alignItems: 'center', 
-    gap: 20, 
-    background: '#fef9c3', 
-    padding: 20,              // Increased from 16
-    borderRadius: 12,         // Slightly larger
-    marginBottom: 20,        // Increased from 16
-    boxShadow: '0 2px 8px rgba(254, 249, 195, 0.5)'
-  },
-  avgScore: { 
-    fontSize: 48,            // Increased from 42
-    fontWeight: 700, 
-    color: '#d97706',
-    minWidth: 60,
-    textAlign: 'center'
-  },
-  starsContainer: { 
-    display: 'flex', 
-    alignItems: 'center',
-    marginBottom: 4
-  },
-  starsRow: {
-    display: 'flex',
-    alignItems: 'center'
-  },
-  starFilled: { 
-    color: '#f59e0b', 
-    fontSize: 24,            // Increased from 22
-    lineHeight: 1
-  },
-  starEmpty: { 
-    color: '#d1d5db', 
-    fontSize: 24,            // Increased from 22
-    lineHeight: 1
-  },
-  avgLabel: { fontSize: 14, color: '#6b7280', marginTop: 4 },
-  loadingText: { color: '#64748b', fontSize: 15, padding: 20 },
-  emptyText: { color: '#9ca3af', fontSize: 15, textAlign: 'center', padding: 20 },
-  card: { 
-    background: '#fff', 
-    padding: 16,            // Increased from 12
-    borderRadius: 12,       // Slightly larger
-    marginBottom: 14,      // Increased from 10
-    border: '1px solid #e5e7eb', 
-    boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-    transition: 'transform 0.15s, box-shadow 0.15s'
-  },
-  cardHeader: { 
-    display: 'flex', 
-    justifyContent: 'space-between', 
-    alignItems: 'flex-start',
-    marginBottom: 8
-  },
-  ratingSection: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8
-  },
-  ratingNum: { color: '#6b7280', fontSize: 14 },
-  comment: { 
-    margin: '10px 0',       // Increased from 6px
-    color: '#374151', 
-    fontSize: 15,           // Slightly larger
-    lineHeight: 1.5 
-  },
-  meta: { 
-    fontSize: 13,           // Increased from 12
-    color: '#9ca3af', 
-    margin: 0,
-    paddingTop: 8,
-    borderTop: '1px solid #f3f4f6'
-  },
-  deleteBtn: { 
-    background: '#ef4444', 
-    color: 'white', 
-    border: 'none', 
-    padding: '12px 16px',   // Increased from 6px 12px
-    borderRadius: 8,        // Slightly larger
-    cursor: 'pointer', 
-    fontSize: 14,           // Increased from 12
-    fontWeight: '600',
-    transition: 'transform 0.1s, box-shadow 0.1s',
-    touchAction: 'manipulation',
-    minHeight: 44,          // Minimum 44px touch target
-    whiteSpace: 'nowrap'
-  },
-};
-
